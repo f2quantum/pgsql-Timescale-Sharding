@@ -16,7 +16,7 @@ services:
     image: "shardingsphere/sharding-proxy:3.1.0"
     container_name: sharding-sphere-proxy
     depends_on:
-     - mysql
+     - timescaledb
     ## wait-for-it.sh will make proxy entry point wait until mysql container 3306 port open
     entrypoint: >
      /bin/sh -c "/opt/wait-for-it.sh sharding-sphere-mysql:3306 --timeout=20 --strict --
