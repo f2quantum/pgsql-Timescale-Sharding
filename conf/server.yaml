@@ -1,0 +1,52 @@
+schemaName: sharding_db
+
+dataSources:
+  ds0: 
+    url: jdbc:postgresql://localhost:5432/ds0
+    username: root
+    password: 
+    connectionTimeoutMilliseconds: 30000
+    idleTimeoutMilliseconds: 60000
+    maxLifetimeMilliseconds: 1800000
+    maxPoolSize: 65
+  ds1:
+    url: jdbc:postgresql://localhost:5432/ds1
+    username: root
+    password: 
+    connectionTimeoutMilliseconds: 30000
+    idleTimeoutMilliseconds: 60000
+    maxLifetimeMilliseconds: 1800000
+    maxPoolSize: 65
+
+shardingRule:
+  tables:
+    t_order:
+      actualDataNodes: ds${0..1}.t_order${0..1}
+      databaseStrategy:
+        inline:
+          shardingColumn: user_id
+          algorithmExpression: ds${user_id % 2}
+      tableStrategy: 
+        inline:
+          shardingColumn: order_id
+          algorithmExpression: t_order${order_id % 2}
+      keyGenerator:
+        type: SNOWFLAKE
+        column: order_id
+    t_order_item:
+      actualDataNodes: ds${0..1}.t_order_item${0..1}
+      databaseStrategy:
+        inline:
+          shardingColumn: user_id
+          algorithmExpression: ds${user_id % 2}
+      tableStrategy:
+        inline:
+          shardingColumn: order_id
+          algorithmExpression: t_order_item${order_id % 2}
+      keyGenerator:
+        type: SNOWFLAKE
+        column: order_item_id
+  bindingTables:
+    - t_order,t_order_item
+  defaultTableStrategy:
+    none:
