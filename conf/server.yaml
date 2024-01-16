@@ -1,52 +1,28 @@
-schemaName: sharding_db
+######################################################################################################
+# 
+# If you want to configure orchestration, authorization and proxy properties, please refer to this file.
+# 
+######################################################################################################
 
-dataSources:
-  ds0: 
-    url: jdbc:postgresql://localhost:5432/ds0
-    username: root
-    password: 
-    connectionTimeoutMilliseconds: 30000
-    idleTimeoutMilliseconds: 60000
-    maxLifetimeMilliseconds: 1800000
-    maxPoolSize: 65
-  ds1:
-    url: jdbc:postgresql://localhost:5432/ds1
-    username: root
-    password: 
-    connectionTimeoutMilliseconds: 30000
-    idleTimeoutMilliseconds: 60000
-    maxLifetimeMilliseconds: 1800000
-    maxPoolSize: 65
+#orchestration:
+#  name: orchestration_ds
+#  overwrite: true
+#  registry:
+#    serverLists: localhost:2181
+#    namespace: orchestration
+#
+authentication:
+  username: root
+  password: root
 
-shardingRule:
-  tables:
-    t_order:
-      actualDataNodes: ds${0..1}.t_order${0..1}
-      databaseStrategy:
-        inline:
-          shardingColumn: user_id
-          algorithmExpression: ds${user_id % 2}
-      tableStrategy: 
-        inline:
-          shardingColumn: order_id
-          algorithmExpression: t_order${order_id % 2}
-      keyGenerator:
-        type: SNOWFLAKE
-        column: order_id
-    t_order_item:
-      actualDataNodes: ds${0..1}.t_order_item${0..1}
-      databaseStrategy:
-        inline:
-          shardingColumn: user_id
-          algorithmExpression: ds${user_id % 2}
-      tableStrategy:
-        inline:
-          shardingColumn: order_id
-          algorithmExpression: t_order_item${order_id % 2}
-      keyGenerator:
-        type: SNOWFLAKE
-        column: order_item_id
-  bindingTables:
-    - t_order,t_order_item
-  defaultTableStrategy:
-    none:
+props:
+  max.connections.size.per.query: 1
+  acceptor.size: 16  # The default value is available processors count * 2.
+  executor.size: 16  # Infinite by default.
+  proxy.frontend.flush.threshold: 128  # The default value is 128.
+    # LOCAL: Proxy will run with LOCAL transaction.
+    # XA: Proxy will run with XA transaction.
+    # BASE: Proxy will run with B.A.S.E transaction.
+  proxy.transaction.type: LOCAL
+  proxy.opentracing.enabled: false
+  sql.show: false

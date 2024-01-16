@@ -1,6 +1,7 @@
 version: '3'
 services:
   timescaledb:
+    container_name: timescaledb01
     image: timescale/timescaledb:latest-pg12
     restart: always
     ports:
@@ -8,8 +9,8 @@ services:
     environment:
       POSTGRES_USER: timescaledb
       POSTGRES_PASSWORD: password
-    volumes:
-      - /data/timescaledb:/var/lib/postgresql/data
+    networks:
+     - db
 
   proxy:
     ## get more versions of proxy here : https://hub.docker.com/r/shardingsphere/sharding-proxy/tags
@@ -19,17 +20,30 @@ services:
      - timescaledb
     ## wait-for-it.sh will make proxy entry point wait until mysql container 3306 port open
     entrypoint: >
-     /bin/sh -c " chmod +x /opt/wait-for-it.sh /opt/wait-for-it.sh sharding-sphere-PostgreSQL:5432 --timeout=20 --strict --
+     /bin/sh -c " chmod +x /opt/wait-for-it.sh
+     && cp  /opt/sharding-proxy/ext-lib/* /opt/sharding-proxy/lib
+     &&/opt/wait-for-it.sh timescaledb01:5432 --timeout=20 --strict --
      && /opt/sharding-proxy/bin/start.sh 3308 
      && tail -f /opt/sharding-proxy/logs/stdout.log"
     ports: 
      - "13308:3308"
-    links:
-    ## 链接到其它服务的中的容器，与 link 连接一样效果，会连接到其它服务中的容器。
-     - "timescaledb:timescaledb"
+    networks:
+     - db
     volumes:
      - ./conf/:/opt/sharding-proxy/conf
-     - ../../tools/wait-for-it.sh:/opt/wait-for-it.sh
+     - ./tools/wait-for-it.sh:/opt/wait-for-it.sh
+     - ./ext-lib:/opt/sharding-proxy/ext-lib
+     #- ./ext-lib:/lib
     environment:
      - JVM_OPTS="-Djava.awt.headless=true"
     
+networks:
+  db:
+    name: db-networks
+    # Use a custom driver
+    driver: bridge
+    ipam:
+        driver: default
+        config:
+            - 
+              subnet: 192.168.2.0/24
