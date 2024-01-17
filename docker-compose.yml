@@ -11,6 +11,9 @@ services:
       POSTGRES_PASSWORD: password
     networks:
      - db
+    volumes:
+      - ./resources/timescaledb01/:/docker-entrypoint-initdb.d/
+
 
   proxy:
     ## get more versions of proxy here : https://hub.docker.com/r/shardingsphere/sharding-proxy/tags
@@ -33,7 +36,6 @@ services:
      - ./conf/:/opt/sharding-proxy/conf
      - ./tools/wait-for-it.sh:/opt/wait-for-it.sh
      - ./ext-lib:/opt/sharding-proxy/ext-lib
-     #- ./ext-lib:/lib
     environment:
      - JVM_OPTS="-Djava.awt.headless=true"
     

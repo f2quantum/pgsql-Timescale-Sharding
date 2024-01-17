@@ -1,10 +1,10 @@
 #Sharding-Proxy支持多逻辑数据源，每个以config-前缀命名的yaml配置文件，即为一个逻辑数据源。以下是config-xxx.yaml的配置配置示例。
 
-schemaName: sharding_db
+schemaName: gisdb
 
 dataSources:
   ds0: 
-    url: jdbc:postgresql://timescaledb01:5432/demo_ds_0
+    url: jdbc:postgresql://timescaledb01:5432/gisdb_0
     username: timescaledb
     password: password
     connectionTimeoutMilliseconds: 30000
@@ -12,7 +12,7 @@ dataSources:
     maxLifetimeMilliseconds: 1800000
     maxPoolSize: 65
   ds1:
-    url: jdbc:postgresql://timescaledb01:5432/demo_ds_1
+    url: jdbc:postgresql://timescaledb01:5432/gisdb_1
     username: timescaledb
     password: password
     connectionTimeoutMilliseconds: 30000
