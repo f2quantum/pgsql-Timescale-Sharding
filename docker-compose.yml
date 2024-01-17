@@ -11,8 +11,8 @@ services:
       POSTGRES_PASSWORD: password
     networks:
      - db
-    volumes:
-      - ./resources/timescaledb01/:/docker-entrypoint-initdb.d/
+    # volumes:
+    #   - ./resources/timescaledb01/:/docker-entrypoint-initdb.d/
 
 
   proxy:
