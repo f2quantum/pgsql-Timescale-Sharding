@@ -1,19 +1,11 @@
-######################################################################################################
-# 
-# If you want to configure orchestration, authorization and proxy properties, please refer to this file.
-# 
-######################################################################################################
+# refer: https://shardingsphere.apache.org/document/current/cn/user-manual/shardingsphere-proxy/yaml-config/rules/
+authority:
+  users:
+    - user: root@%
+      password: root
+    - user: sharding
+      password: sharding
 
-#orchestration:
-#  name: orchestration_ds
-#  overwrite: true
-#  registry:
-#    serverLists: localhost:2181
-#    namespace: orchestration
-#
-authentication:
-  username: root
-  password: root
 
 props:
   max.connections.size.per.query: 1

@@ -1,9 +1,12 @@
 #Sharding-Proxy支持多逻辑数据源，每个以config-前缀命名的yaml配置文件，即为一个逻辑数据源。以下是config-xxx.yaml的配置配置示例。
-
+# refer: 
+#逻辑数据源名称
 schemaName: gisdb
 
+#省略数据源配置，与数据分片一致
+# refer: https://shardingsphere.apache.org/document/current/cn/user-manual/shardingsphere-jdbc/yaml-config/rules/sharding/
 dataSources:
-  ds0: 
+  ds_0: 
     url: jdbc:postgresql://timescaledb01:5432/gisdb_0
     username: timescaledb
     password: password
@@ -11,7 +14,7 @@ dataSources:
     idleTimeoutMilliseconds: 60000
     maxLifetimeMilliseconds: 1800000
     maxPoolSize: 65
-  ds1:
+  ds_1:
     url: jdbc:postgresql://timescaledb01:5432/gisdb_1
     username: timescaledb
     password: password
@@ -20,29 +23,46 @@ dataSources:
     maxLifetimeMilliseconds: 1800000
     maxPoolSize: 65
 
-shardingRule:
+
+rules:
+- !SHARDING
   tables:
-    t_order:
-      actualDataNodes: ds_${0..1}.t_order_${0..1}
-      tableStrategy:
-        inline:
-          shardingColumn: order_id
-          algorithmExpression: t_order_${order_id % 2}
-      keyGeneratorColumnName: order_id
-    t_order_item:
-      actualDataNodes: ds_${0..1}.t_order_item_${0..1}
-      tableStrategy:
-        inline:
-          shardingColumn: order_id
-          algorithmExpression: t_order_item_${order_id % 2}
-      keyGeneratorColumnName: order_item_id
+    time_series: 
+      actualDataNodes: ds_${0..1}.time_series_${0..1}
+      tableStrategy: 
+        standard:
+          shardingColumn: id
+          shardingAlgorithmName: time_series_inline
+      keyGenerateStrategy:
+        column: id
+        keyGeneratorName: snowflake
+      auditStrategy:
+        auditorNames:
+          - sharding_key_required_auditor
+        allowHintDisable: true
+  defaultShardingColumn: id
   bindingTables:
-    - t_order,t_order_item
+    - time_series
   defaultDatabaseStrategy:
-    inline:
-      shardingColumn: user_id
-      algorithmExpression: ds_${user_id % 2}
+    standard:
+      shardingColumn: id
+      shardingAlgorithmName: database_inline
   defaultTableStrategy:
     none:
-  defaultKeyGeneratorClassName: io.shardingsphere.core.keygen.DefaultKeyGenerator
+  shardingAlgorithms:
+    database_inline:
+      type: INLINE
+      props:
+        algorithm-expression: ds_${id % 2}
+    time_series_inline:
+      type: INLINE
+      props:
+        algorithm-expression: time_series_${id % 2}
+
+  keyGenerators:
+    snowflake:
+      type: SNOWFLAKE
+  auditors:
+    sharding_key_required_auditor:
+      type: DML_SHARDING_CONDITIONS
 

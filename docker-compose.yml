@@ -11,31 +11,32 @@ services:
       POSTGRES_PASSWORD: password
     networks:
      - db
-    # volumes:
-    #   - ./resources/timescaledb01/:/docker-entrypoint-initdb.d/
+    volumes:
+      - ./resources/timescaledb01/init_gisdb_schema.sh:/docker-entrypoint-initdb.d/init_gisdb_schema.sh
 
 
   proxy:
     ## get more versions of proxy here : https://hub.docker.com/r/shardingsphere/sharding-proxy/tags
-    image: "shardingsphere/sharding-proxy:3.1.0"
+    image: "apache/shardingsphere-proxy:latest"
     container_name: sharding-sphere-proxy
     depends_on:
      - timescaledb
     ## wait-for-it.sh will make proxy entry point wait until mysql container 3306 port open
-    entrypoint: >
-     /bin/sh -c " chmod +x /opt/wait-for-it.sh
-     && cp  /opt/sharding-proxy/ext-lib/* /opt/sharding-proxy/lib
-     &&/opt/wait-for-it.sh timescaledb01:5432 --timeout=20 --strict --
-     && /opt/sharding-proxy/bin/start.sh 3308 
-     && tail -f /opt/sharding-proxy/logs/stdout.log"
+    # entrypoint: >
+    #  /bin/sh -c " chmod +x /opt/wait-for-it.sh
+    #  && cp  /opt/sharding-proxy/ext-lib/* /opt/sharding-proxy/lib
+    #  &&/opt/wait-for-it.sh timescaledb01:5432 --timeout=20 --strict --
+    #  && sleep 5
+    #  && /opt/sharding-proxy/bin/start.sh 3308 
+    #  && tail -f /opt/sharding-proxy/logs/stdout.log"
     ports: 
      - "13308:3308"
     networks:
      - db
     volumes:
-     - ./conf/:/opt/sharding-proxy/conf
+     - ./conf/:/opt/shardingsphere-proxy/conf
      - ./tools/wait-for-it.sh:/opt/wait-for-it.sh
-     - ./ext-lib:/opt/sharding-proxy/ext-lib
+    #  - ./ext-lib:/opt/shardingsphere-proxy/ext-lib
     environment:
      - JVM_OPTS="-Djava.awt.headless=true"
     
