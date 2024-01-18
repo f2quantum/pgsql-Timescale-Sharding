@@ -30,7 +30,7 @@ services:
     #  && /opt/sharding-proxy/bin/start.sh 3308 
     #  && tail -f /opt/sharding-proxy/logs/stdout.log"
     ports: 
-     - "13308:3308"
+     - 13308:3308
     networks:
      - db
     volumes:

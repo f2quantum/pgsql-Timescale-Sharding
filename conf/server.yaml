@@ -6,15 +6,32 @@ authority:
     - user: sharding
       password: sharding
 
+logging:
+ loggers:
+ - loggerName: ShardingSphere-SQL
+   additivity: true
+   level: INFO
+   props:
+     enable: false
+
+
 
 props:
-  max.connections.size.per.query: 1
-  acceptor.size: 16  # The default value is available processors count * 2.
-  executor.size: 16  # Infinite by default.
-  proxy.frontend.flush.threshold: 128  # The default value is 128.
-    # LOCAL: Proxy will run with LOCAL transaction.
-    # XA: Proxy will run with XA transaction.
-    # BASE: Proxy will run with B.A.S.E transaction.
-  proxy.transaction.type: LOCAL
-  proxy.opentracing.enabled: false
-  sql.show: false
+ system-log-level: INFO
+ max-connections-size-per-query: 1
+ kernel-executor-size: 16  # Infinite by default.
+ proxy-frontend-flush-threshold: 128  # The default value is 128.
+ # sql-show is the same as props in logger ShardingSphere-SQL, and its priority is lower than logging rule
+ sql-show: false
+ check-table-metadata-enabled: false
+   # Proxy backend query fetch size. A larger value may increase the memory usage of ShardingSphere Proxy.
+   # The default value is -1, which means set the minimum value for different JDBC drivers.
+ proxy-backend-query-fetch-size: -1
+ proxy-frontend-executor-size: 0 # Proxy frontend executor size. The default value is 0, which means let Netty decide.
+ proxy-frontend-max-connections: 0 # Less than or equal to 0 means no limitation.
+ proxy-default-port: 3307 # Proxy default port.
+ proxy-netty-backlog: 1024 # Proxy netty backlog.
+ cdc-server-port: 33071 # CDC server port
+ proxy-frontend-ssl-enabled: false
+ proxy-frontend-ssl-cipher: ''
+ proxy-frontend-ssl-version: TLSv1.2,TLSv1.3
