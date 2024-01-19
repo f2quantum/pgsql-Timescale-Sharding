@@ -5,6 +5,9 @@ authority:
       password: root
     - user: sharding
       password: sharding
+    - user: gisdb
+      password: gisdb
+
 
 logging:
  loggers:

@@ -2,7 +2,8 @@ version: '3'
 services:
   timescaledb:
     container_name: timescaledb01
-    image: timescale/timescaledb:latest-pg12
+    # image: timescale/timescaledb:latest-pg12
+    image:  postgres:12.17-bullseye
     restart: always
     ports:
       - 5432:5432
@@ -17,20 +18,19 @@ services:
 
   proxy:
     ## get more versions of proxy here : https://hub.docker.com/r/shardingsphere/sharding-proxy/tags
-    image: "apache/shardingsphere-proxy:latest"
+    image: "apache/shardingsphere-proxy:5.4.1"
     container_name: sharding-sphere-proxy
     depends_on:
      - timescaledb
-    ## wait-for-it.sh will make proxy entry point wait until mysql container 3306 port open
-    # entrypoint: >
-    #  /bin/sh -c " chmod +x /opt/wait-for-it.sh
-    #  && cp  /opt/sharding-proxy/ext-lib/* /opt/sharding-proxy/lib
-    #  &&/opt/wait-for-it.sh timescaledb01:5432 --timeout=20 --strict --
-    #  && sleep 5
-    #  && /opt/sharding-proxy/bin/start.sh 3308 
-    #  && tail -f /opt/sharding-proxy/logs/stdout.log"
+    # wait-for-it.sh will make proxy entry point wait until mysql container 3306 port open
+    entrypoint: >
+     /bin/sh -c " chmod +x /opt/wait-for-it.sh
+     &&/opt/wait-for-it.sh timescaledb01:5432 --timeout=20 --strict --
+     && sleep 5
+     && /opt/shardingsphere-proxy/bin/start.sh 3308
+     && tail -f /opt/shardingsphere-proxy/logs/stdout.log"
     ports: 
-     - 13308:3308
+     - 3308:3308
     networks:
      - db
     volumes:

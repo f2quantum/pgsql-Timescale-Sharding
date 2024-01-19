@@ -15,6 +15,13 @@ docker-compose up --remove-orphans
 docker-compose up -d --remove-orphans
 ```
 
+客户端连接：
+
+```shell
+docker run --rm --name psql-client --network db-networks -it postgres:9.6.16 psql -h sharding-sphere-proxy -U gisdb -p 3308 postgres
+
+```
+
 停机参数：
 
 ```
