@@ -23,12 +23,30 @@ dataSources:
     maxLifetimeMilliseconds: 1800000
     maxPoolSize: 65
 
+  ds_2: 
+    url: jdbc:postgresql://timescaledb02:5432/gisdb_0
+    username: timescaledb
+    password: password
+    connectionTimeoutMilliseconds: 30000
+    idleTimeoutMilliseconds: 60000
+    maxLifetimeMilliseconds: 1800000
+    maxPoolSize: 65
+
+  ds_3: 
+    url: jdbc:postgresql://timescaledb02:5432/gisdb_1
+    username: timescaledb
+    password: password
+    connectionTimeoutMilliseconds: 30000
+    idleTimeoutMilliseconds: 60000
+    maxLifetimeMilliseconds: 1800000
+    maxPoolSize: 65
+
 
 rules:
 - !SHARDING
   tables:
     time_series: 
-      actualDataNodes: ds_${0..1}.time_series_${0..1}
+      actualDataNodes: ds_${0..3}.time_series_${0..1}
       tableStrategy: 
         standard:
           shardingColumn: id

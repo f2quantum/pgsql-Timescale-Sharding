@@ -26,4 +26,6 @@ CREATE TABLE time_series_0
 CREATE TABLE time_series_1
 (id bigint,time TIMESTAMPTZ,lon varchar(100),lat varchar(100));
 
+
+
 EOF

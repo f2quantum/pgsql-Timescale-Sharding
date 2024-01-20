@@ -20,6 +20,9 @@ docker-compose up -d --remove-orphans
 ```shell
 docker run --rm --name psql-client --network db-networks -it postgres:9.6.16 psql -h sharding-sphere-proxy -U gisdb -p 3308 postgres
 
+password: gisdb
+
+\c gisdb
 ```
 
 停机参数：
@@ -32,3 +35,11 @@ docker-compose down
 
 使用pgbench压测，请参见如下命令：
 
+## 文件目录说明
+
+├─conf 配置文件
+├─conf-template 配置文件模板没啥用
+├─resources 资源文件
+│  └─timescaledb01
+├─scripts python脚本库
+└─tools 辅助脚本
