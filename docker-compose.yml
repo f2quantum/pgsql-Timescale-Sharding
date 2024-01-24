@@ -2,7 +2,8 @@ version: '3'
 services:
   timescaledb01:
     container_name: timescaledb01
-    image: timescale/timescaledb:latest-pg12
+    image: postgis/postgis:12-3.4	
+    # image: timescale/timescaledb:latest-pg12
     # image:  postgres:12.17-bullseye
     restart: always
     ports:
@@ -17,7 +18,7 @@ services:
 
   timescaledb02:
     container_name: timescaledb02
-    image: timescale/timescaledb:latest-pg12
+    image: postgis/postgis:12-3.4	
     # image:  postgres:12.17-bullseye
     restart: always
     ports:

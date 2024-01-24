@@ -8,5 +8,5 @@ client:
 	docker run --rm --name psql-client -v  --network db-networks -it postgres:9.6.16 psql -h sharding-sphere-proxy -U gisdb -p 3308 postgres
 
 
-startup:
+deploy:
 	docker-compose up -d --remove-orphans
