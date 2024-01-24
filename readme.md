@@ -18,11 +18,18 @@ docker-compose up -d --remove-orphans
 客户端连接：
 
 ```shell
-docker run --rm --name psql-client --network db-networks -it postgres:9.6.16 psql -h sharding-sphere-proxy -U gisdb -p 3308 postgres
+docker run --rm --name psql-client -v ./data/:/opt/data/ --network db-networks -it postgres:9.6.16 psql -h sharding-sphere-proxy -U gisdb -p 3308 postgres
 
 password: gisdb
 
 \c gisdb
+```
+
+数据批量导入
+
+``` shell
+docker run --rm -v ./data/:/opt/data/ --network db-networks -it postgres:9.6.16 psql -h sharding-sphere-proxy -U gisdb -p 3308 -f /opt/data/data.sql postgres
+
 ```
 
 停机参数：

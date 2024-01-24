@@ -2,9 +2,9 @@ import csv
 import random
 import datetime
 import random
+import uuid
 
-
-num_points=1000000
+num_points=100000
 
 def generate_id():
     start_num = [110,111,112,113,114,115,116,117,118,119,120]
@@ -16,7 +16,7 @@ def generate_id():
 
 def generate_utc():
     current_time = datetime.datetime.now()
-    utc = current_time.strftime("%d/%m/%Y %H:%M:%S+08")
+    utc = current_time.strftime("%Y-%m-%d %H:%M:%S")
     return utc
 
 
@@ -27,11 +27,15 @@ def generate_coordinates():
 
 
 if __name__ == '__main__':
-    with open('data.csv','w',newline="") as file:
-        writer = csv.writer(file)
-        writer.writerow(['id','utc','lon','lat'])
+    #INSERT INTO time_series (id, time, lon, lat) VALUES (1, '2022-01-01 12:00:00', '123.456', '78.910');
+
+    with open('./data/data.sql','w',newline="") as file:
+        file.write("\c gisdb;\n")
         for _ in range(num_points):
             id=generate_id()
             utc=generate_utc()
             lon,lat=generate_coordinates()
-            writer.writerow([id,utc,lon,lat])
+            sql = f'''INSERT INTO time_series (id, time, lon, lat) VALUES ({id},'{utc}', '{lon}', '{lat}');\n'''\
+            .format(id=id).format(utc=utc).format(lon = lon).format(lat = lat)
+            
+            file.writelines(sql)
