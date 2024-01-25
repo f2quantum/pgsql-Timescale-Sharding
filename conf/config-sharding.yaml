@@ -43,15 +43,16 @@ dataSources:
 
 
 rules:
-- !SHARDING
+- !SHARDING 
+# 字段参考 https://shardingsphere.apache.org/document/5.1.2/cn/user-manual/shardingsphere-jdbc/yaml-config/rules/sharding/
   tables:
-    time_series: 
-      actualDataNodes: ds_${0..3}.time_series_${0..1}
-      tableStrategy: 
-        standard:
+    time_series: #需要进行分表的表名
+      actualDataNodes: ds_${0..3}.time_series_${0..1} # 表达式，将表分为time_series_0 , time_series_1
+      tableStrategy: #分表策略
+        standard: # 用于单分片键的标准分片场景
           shardingColumn: id
           shardingAlgorithmName: time_series_inline
-      keyGenerateStrategy:
+      keyGenerateStrategy: # 分布式序列策略
         column: id
         keyGeneratorName: snowflake
       auditStrategy:
@@ -59,26 +60,26 @@ rules:
           - sharding_key_required_auditor
         allowHintDisable: true
   defaultShardingColumn: id
-  bindingTables:
+  bindingTables: # 解决笛卡尔积问题（主从集群，当存在有关联关系表时候，联合查询数据会有重复的问题）
     - time_series
-  defaultDatabaseStrategy:
+  defaultDatabaseStrategy: # 分库策略
     standard:
       shardingColumn: id
       shardingAlgorithmName: database_inline
-  defaultTableStrategy:
+  defaultTableStrategy: # 设置所有的表默认不进行分表，如果要进行分表，则进行如上单独的配置即可
     none:
   shardingAlgorithms:
     database_inline:
       type: INLINE
       props:
-        algorithm-expression: ds_${id % 2}
+        algorithm-expression: ds_${id % 4}
     time_series_inline:
       type: INLINE
       props:
         algorithm-expression: time_series_${id % 2}
 
   keyGenerators:
-    snowflake:
+    snowflake: # 雪花算法名称，自定义名称
       type: SNOWFLAKE
   auditors:
     sharding_key_required_auditor:

@@ -43,7 +43,7 @@ services:
     # wait-for-it.sh will make proxy entry point wait until mysql container 3306 port open
     entrypoint: >
      /bin/sh -c " chmod +x /opt/wait-for-it.sh
-     &&/opt/wait-for-it.sh timescaledb01:5432 --timeout=20 --strict --
+     &&/opt/wait-for-it.sh timescaledb01:5432 --timeout=60 --strict --
      && sleep 5
      && /opt/shardingsphere-proxy/bin/start.sh 3308
      && tail -f /opt/shardingsphere-proxy/logs/stdout.log"
@@ -54,7 +54,6 @@ services:
     volumes:
      - ./conf/:/opt/shardingsphere-proxy/conf
      - ./tools/wait-for-it.sh:/opt/wait-for-it.sh
-    #  - ./ext-lib:/opt/shardingsphere-proxy/ext-lib
     environment:
      - JVM_OPTS="-Djava.awt.headless=true"
     
