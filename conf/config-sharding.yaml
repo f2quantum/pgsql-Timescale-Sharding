@@ -59,9 +59,24 @@ rules:
         auditorNames:
           - sharding_key_required_auditor
         allowHintDisable: true
+    job: #需要进行分表的表名
+      actualDataNodes: ds_${0..3}.job_${0..1}
+      tableStrategy: #分表策略
+        standard: # 用于单分片键的标准分片场景
+          shardingColumn: id
+          shardingAlgorithmName: jobs_inline
+      keyGenerateStrategy: # 分布式序列策略
+        column: id
+        keyGeneratorName: snowflake
+      auditStrategy:
+        auditorNames:
+          - sharding_key_required_auditor
+        allowHintDisable: true
+
   defaultShardingColumn: id
   bindingTables: # 解决笛卡尔积问题（主从集群，当存在有关联关系表时候，联合查询数据会有重复的问题）
     - time_series
+    - job
   defaultDatabaseStrategy: # 分库策略
     standard:
       shardingColumn: id
@@ -73,10 +88,19 @@ rules:
       type: INLINE
       props:
         algorithm-expression: ds_${id % 4}
+        allow-range-query-with-inline-sharding: true
+
     time_series_inline:
       type: INLINE
       props:
         algorithm-expression: time_series_${id % 2}
+        allow-range-query-with-inline-sharding: true
+
+    jobs_inline:
+      type: INLINE
+      props:
+        algorithm-expression: job_${id %2}
+        allow-range-query-with-inline-sharding: true
 
   keyGenerators:
     snowflake: # 雪花算法名称，自定义名称

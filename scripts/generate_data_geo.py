@@ -26,20 +26,16 @@ def generate_coordinates():
     return longitude,latitude
 
 
-def generate_job():
-    return "INSERT INTO job (id, start_time, end_time) VALUES (1, '2023-02-01 10:00:00', '2025-02-01 11:00:00');"
-
 if __name__ == '__main__':
     #INSERT INTO time_series (id, time, lon, lat) VALUES (1, '2022-01-01 12:00:00', '123.456', '78.910');
 
     with open('./data/data.sql','w',newline="") as file:
         file.write("\c gisdb;\n")
-        file.write(generate_job())
         for _ in range(num_points):
             id=generate_id()
             utc=generate_utc()
             lon,lat=generate_coordinates()
-            sql = f'''INSERT INTO time_series (id, time, lon, lat) VALUES ({id},'{utc}', {lon}, {lat});\n'''\
+            sql = f'''INSERT INTO time_series (id, time, geo) VALUES ({id},'{utc}', 'POINT({lon} {lat})');\n'''\
             .format(id=id).format(utc=utc).format(lon = lon).format(lat = lat)
             
             file.writelines(sql)

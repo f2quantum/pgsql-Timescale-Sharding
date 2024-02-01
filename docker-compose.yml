@@ -45,8 +45,7 @@ services:
      /bin/sh -c " chmod +x /opt/wait-for-it.sh
      &&/opt/wait-for-it.sh timescaledb01:5432 --timeout=60 --strict --
      && sleep 5
-     && /opt/shardingsphere-proxy/bin/start.sh 3308
-     && tail -f /opt/shardingsphere-proxy/logs/stdout.log"
+     && /opt/shardingsphere-proxy/bin/start.sh 3308"
     ports: 
      - 3308:3308
     networks:
