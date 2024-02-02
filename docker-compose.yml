@@ -45,16 +45,19 @@ services:
      /bin/sh -c " chmod +x /opt/wait-for-it.sh
      &&/opt/wait-for-it.sh timescaledb01:5432 --timeout=60 --strict --
      && sleep 5
-     && /opt/shardingsphere-proxy/bin/start.sh 3308"
+     && /opt/shardingsphere-proxy/bin/start.sh --agent 3308"
     ports: 
      - 3308:3308
+     - 9090:9090
+     - 14250:14250
     networks:
      - db
     volumes:
      - ./conf/:/opt/shardingsphere-proxy/conf
+     - ./agent/:/agent/
      - ./tools/wait-for-it.sh:/opt/wait-for-it.sh
     environment:
-     - JVM_OPTS="-Djava.awt.headless=true"
+      JVM_OPTS: "-javaagent:/agent/shardingsphere-agent-5.4.1.jar -Djava.awt.headless=true"
     
 networks:
   db:
